@@ -1,0 +1,24 @@
+---
+- name: Make sure docker is not installed.
+  package:
+    name:
+      - docker
+      - docker-engine
+      - docker-common
+    state: absent
+
+# apt-transport allows the use of repositories accessed via the HTTP Secure protocol (HTTPS),
+#  also referred to as HTTP over TLS
+- name: Make sure dependencies are installed.
+  apt: name=apt-transport-https ca-certificates state=present
+
+- name: Add docker apt key.
+  apt_key:
+    url: "{{ docker_apt_key }}"
+    state: present
+  register: docker_repo_key
+
+- name: Add docker repository.
+  apt_repository:
+    repo: "{{ docker_apt_repo }}"
+    state: present
